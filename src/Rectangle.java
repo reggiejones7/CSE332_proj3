@@ -1,3 +1,5 @@
+import java.awt.geom.Point2D;
+
 
 // A class to represent a Rectangle
 // You do not have to use this, but it's quite convenient
@@ -23,6 +25,14 @@ public class Rectangle {
 						     Math.max(this.right,  that.right),             
 						     Math.max(this.top,    that.top),
 				             Math.min(this.bottom, that.bottom));
+	}
+	
+	//returns boolean of if a point is in a triangle
+	public boolean insideRectangle(Point2D.Float point) {
+		if (point.x >= left && point.x <= right && point.y >= bottom && point.y <= top) {
+			return true;
+		}
+		return false;
 	}
 	
 	public String toString() {
