@@ -176,9 +176,9 @@ public class PopulationQuery {
     	return new Pair<Integer, Float>(recPop, percent);
 		} else {
 			ParallelQuery pq = new ParallelQuery(0, cd.data_size, cd.data, rec);
-			popHold p = fjPool.invoke(pq);
-			float percent = (p.recPop / (float) p.totalPop)* 100;
-			return new Pair<Integer, Float>(p.recPop, percent);
+			Pair<Integer, Integer> p = fjPool.invoke(pq);
+			float percent = (p.getElementB() / (float) p.getElementA())* 100;
+			return new Pair<Integer, Float>(p.getElementB(), percent);
 		}
     }
     

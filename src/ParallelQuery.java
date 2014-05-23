@@ -1,6 +1,6 @@
 import java.awt.geom.Point2D;
 import java.util.concurrent.RecursiveTask;
-public class ParallelQuery extends RecursiveTask<popHold> {
+public class ParallelQuery extends RecursiveTask<Pair<Integer, Integer>> {
 	
 	int lo, hi;
 	Rectangle rec;
@@ -14,26 +14,26 @@ public class ParallelQuery extends RecursiveTask<popHold> {
 	}
 
 	@Override
-	protected popHold compute() {
+	protected Pair<Integer, Integer> compute() {
 
 		if(hi - lo == 1) {
 			CensusGroup group = array[lo];
 			Point2D.Float point = new Point2D.Float(group.longitude, group.latitude);
 			if (rec.insideRectangle(point)) {
-				return new popHold(group.population, group.population);
+				return new Pair<Integer,Integer>(group.population, group.population);
 			}
-			return new popHold(group.population, 0);
+			return new Pair<Integer, Integer>(group.population, 0);
 		}
 		
 		ParallelQuery left = new ParallelQuery(lo, (hi+lo)/2, array, rec);
 		ParallelQuery right = new ParallelQuery((hi+lo)/2, hi, array, rec);
 		left.fork();
-		popHold rightA = right.compute();
-		popHold leftA = left.join();
+		Pair<Integer, Integer> rightA = right.compute();
+		Pair<Integer, Integer> leftA = left.join();
 		
-		int newTotal = rightA.totalPop + leftA.totalPop;
-		int newGroup = rightA.recPop + leftA.recPop;
-		return new popHold(newTotal, newGroup);	
+		int newTotal = rightA.getElementA() + leftA.getElementA();
+		int newGroup = rightA.getElementB() + leftA.getElementB();
+		return new Pair<Integer, Integer>(newTotal, newGroup);	
 	}
 
 }
