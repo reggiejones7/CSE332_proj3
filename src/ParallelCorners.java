@@ -1,5 +1,5 @@
 import java.util.concurrent.RecursiveTask;
-public class ParallelCorners extends RecursiveTask<Corner> {
+public class ParallelCorners extends RecursiveTask<Rectangle> {
 	
 	int lo, hi;
 	CensusGroup[] array;
@@ -11,23 +11,23 @@ public class ParallelCorners extends RecursiveTask<Corner> {
 	}
 
 	@Override
-	protected Corner compute() {
+	protected Rectangle compute() {
 
 		if(hi - lo == 1) {
-			return new Corner(array[lo].longitude, array[lo].longitude, array[lo].latitude, array[lo].latitude);
+			return new Rectangle(array[lo].longitude, array[lo].longitude, array[lo].latitude, array[lo].latitude);
 
 		}
 		ParallelCorners left = new ParallelCorners(lo, (hi+lo)/2, array );
 		ParallelCorners right = new ParallelCorners((hi+lo)/2, hi, array);
 		left.fork();
-		Corner rightA = right.compute();
-		Corner leftA = left.join();
+		Rectangle rightA = right.compute();
+		Rectangle leftA = left.join();
 		
-		float longMin = Math.min(rightA.longMin, leftA.longMin);
-		float longMax = Math.max(rightA.longMax, leftA.longMax);
-		float latMin = Math.min(rightA.latMin,  leftA.latMin);
-		float latMax = Math.max(rightA.latMax, leftA.latMax);
-		return new Corner(longMin, longMax, latMin, latMax);
+		float newLeft = Math.min(rightA.left, leftA.left);
+		float newRight = Math.max(rightA.right, leftA.right);
+		float newBottom = Math.min(rightA.bottom,  leftA.bottom);
+		float newTop = Math.max(rightA.top, leftA.top);
+		return new Rectangle(newLeft, newRight, newTop, newBottom);
 	}
 
 }

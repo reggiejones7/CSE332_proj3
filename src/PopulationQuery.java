@@ -136,11 +136,11 @@ public class PopulationQuery {
 			
 		} else {
 			ParallelCorners pc = new ParallelCorners(0, cd.data_size, cd.data);
-			Corner c = fjPool.invoke(pc);
-			longMin = c.longMin;
-			longMax = c.longMax;
-			latMin = c.latMin;
-			latMax = c.latMax;		
+			Rectangle r = fjPool.invoke(pc);
+			longMin = r.left;
+			longMax = r.right;
+			latMin = r.bottom;
+			latMax = r.top;		
 		}
 		//Rectangle us = new Rectangle(longMin, longMax, latMax, longMin);
     }
