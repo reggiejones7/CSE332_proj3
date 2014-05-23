@@ -22,27 +22,6 @@ public class ParallelQuery extends RecursiveTask<Pair<Integer, Integer>> {
 
 	@Override
 	protected Pair<Integer, Integer> compute() {
-
-		/*if(hi - lo == 1) {
-			CensusGroup group = array[lo];
-			Point2D.Float point = new Point2D.Float(group.longitude, group.latitude);
-			if (rec.insideRectangle(point)) {
-				return new Pair<Integer,Integer>(group.population, group.population);
-			}
-			return new Pair<Integer, Integer>(group.population, 0);
-		}
-		
-		ParallelQuery left = new ParallelQuery(lo, (hi+lo)/2, array, rec);
-		ParallelQuery right = new ParallelQuery((hi+lo)/2, hi, array, rec);
-		left.fork();
-		Pair<Integer, Integer> rightA = right.compute();
-		Pair<Integer, Integer> leftA = left.join();
-		
-		int newTotal = rightA.getElementA() + leftA.getElementA();
-		int newGroup = rightA.getElementB() + leftA.getElementB();
-		return new Pair<Integer, Integer>(newTotal, newGroup);	
-		*/
-		
 		if (hi - lo > sequentialCutoff) {
 			ParallelQuery left = new ParallelQuery(lo, (hi+lo)/2, array, rec);
 			ParallelQuery right = new ParallelQuery((hi+lo)/2, hi, array, rec);
@@ -54,18 +33,6 @@ public class ParallelQuery extends RecursiveTask<Pair<Integer, Integer>> {
 			int newGroup = rightA.getElementB() + leftA.getElementB();
 			return new Pair<Integer, Integer>(newTotal, newGroup);
 		} else {
-			/*int totalPop = 0;
-			int recPop = 0;
-			for (int i = lo; i < hi; i++) {
-				CensusGroup group = array[i];
-				Point2D.Float point = new Point2D.Float(group.longitude, group.latitude);
-				if (rec.insideRectangle(point)) {
-					recPop += group.population;
-				}
-				totalPop += group.population;
-			}
-			return new Pair<Integer, Integer>(totalPop, recPop);
-			*/
 			return sequentialPopulation(lo, hi);
 		}
 	}

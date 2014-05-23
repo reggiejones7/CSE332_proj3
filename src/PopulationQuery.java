@@ -25,16 +25,14 @@ public class PopulationQuery {
 	public static final int LONGITUDE_INDEX  = 6;
 	
     public static ForkJoinPool fjPool = new ForkJoinPool();
-	static final int SEQUENTIAL_CUTOFF= 1000;
-
 	
-	
-	// the number of columns and rows 
+	// the number of columns and rows in a query
 	private static int xBuckets;
 	private static int yBuckets;
 	//the data parsed from the file given by client in preprocess
 	private static CensusData cd;
 	
+	//largest rectangle from cd, e.g. map of the U.S.
 	private static Rectangle map;
 	private static int version;
 	
