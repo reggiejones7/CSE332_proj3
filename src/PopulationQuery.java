@@ -35,12 +35,8 @@ public class PopulationQuery {
 	//the data parsed from the file given by client in preprocess
 	private static CensusData cd;
 	
-	// next four fields are the metrics of the CensusData
-	private static float longMin;
-	private static float longMax;
-	private static float latMin;
-	private static float latMax;
-	
+	private static Rectangle map;
+	private static int version;
 	
 	// parse the input file into a large array held in a CensusData object
 	public static CensusData parse(String filename) {
@@ -118,31 +114,17 @@ public class PopulationQuery {
     	//necessary for the given version of the program. 
     	xBuckets = x;
 		yBuckets = y;
+		version = versionNum;
 		cd = parse(filename);
     	
-		if (cd.data_size < SEQUENTIAL_CUTOFF) {
-		
-		longMin = cd.data[0].longitude;
-		longMax = cd.data[0].longitude; 
-		latMin = cd.data[0].latitude;
-		latMax = cd.data[0].latitude;
-		for (int i = 1; i < cd.data_size; i++) {
-			CensusGroup cg = cd.data[i];
-			longMin = Math.min(cg.longitude, longMin);
-			longMax = Math.max(cg.longitude, longMax);
-			latMin = Math.min(cg.latitude, latMin);
-			latMax = Math.max(cg.latitude, latMax);
-		}
-			
+		ParallelCorners pc;
+		if (versionNum == 1) {
+			pc = new ParallelCorners(0, cd.data_size, cd.data, cd.data_size);
 		} else {
-			ParallelCorners pc = new ParallelCorners(0, cd.data_size, cd.data);
-			Rectangle r = fjPool.invoke(pc);
-			longMin = r.left;
-			longMax = r.right;
-			latMin = r.bottom;
-			latMax = r.top;		
+			pc = new ParallelCorners(0, cd.data_size, cd.data);
 		}
-		//Rectangle us = new Rectangle(longMin, longMax, latMax, longMin);
+		Rectangle r = fjPool.invoke(pc);
+		map = r;
     }
     
     //returns Pair<total population of query, percent of pop in query / total pop of country>
@@ -154,6 +136,11 @@ public class PopulationQuery {
     	//should when given integers at the prompt.
     	checkQueryInputs(west, south, east, north);
     	
+    	float longMin = map.left;
+    	float longMax = map.right;
+    	float latMin = map.bottom;
+    	float latMax = map.top;
+    	
     	float xBucketSize = Math.abs((longMax - longMin) / xBuckets);
 		float yBucketSize = Math.abs((latMax - latMin) / yBuckets);
 		float left = (west - 1) * xBucketSize + longMin;
@@ -161,25 +148,17 @@ public class PopulationQuery {
 		float bottom = (south - 1) * yBucketSize + latMin;
 		float top = north * yBucketSize + latMin;
 		Rectangle rec = new Rectangle(left, right, top, bottom);
-		if (cd.data_size < SEQUENTIAL_CUTOFF) {
-			int totalPop = 0;
-			int recPop = 0;
-			for (int i = 0; i < cd.data_size; i++) {
-				CensusGroup group = cd.data[i];
-				Point2D.Float point = new Point2D.Float(group.longitude, group.latitude);
-				if (rec.insideRectangle(point)) {
-					recPop += group.population;
-				}
-				totalPop += group.population;
-		}
-		float percent = (recPop / (float) totalPop) * 100 ;
-    	return new Pair<Integer, Float>(recPop, percent);
+			
+		ParallelQuery pq = new ParallelQuery(0, cd.data_size, cd.data, rec);
+		Pair<Integer, Integer> p;
+		if (version == 1) {
+			p = pq.sequentialPopulation(0, cd.data_size);
 		} else {
-			ParallelQuery pq = new ParallelQuery(0, cd.data_size, cd.data, rec);
-			Pair<Integer, Integer> p = fjPool.invoke(pq);
-			float percent = (p.getElementB() / (float) p.getElementA())* 100;
-			return new Pair<Integer, Float>(p.getElementB(), percent);
+			//v2
+			p = fjPool.invoke(pq);
 		}
+		float percent = (p.getElementB() / (float) p.getElementA())* 100;
+		return new Pair<Integer, Float>(p.getElementB(), percent);
     }
     
 	// argument 1: file name for input data: pass this to parse
@@ -224,16 +203,14 @@ public class PopulationQuery {
 				System.out.println("population of rectangle: " + pair.getElementA());
 				System.out.printf("percent of total population: %.2f\n", pair.getElementB());
 				
+				System.out.println("Please give west, south, east, north coordinates "
+						+ "of your query rectangle:");
 				query = s.nextLine();
 				inputs = query.split(" ");
 			} catch (NumberFormatException e) {
 				System.exit(1);
 			}
 		}
-		
-		//note:to combine v1 and v2 think about making them both parallel but
-		// have v1 just pass in the sequential cutoff of the size of the cd so it never does the parallel case
-		
 		s.close();
 	}
 }
