@@ -5,6 +5,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.Scanner;
 import java.util.regex.Pattern;
+import java.util.concurrent.ForkJoinPool;
 
 /**
  * 
@@ -22,6 +23,11 @@ public class PopulationQuery {
 	public static final int POPULATION_INDEX = 4; // zero-based indices
 	public static final int LATITUDE_INDEX   = 5;
 	public static final int LONGITUDE_INDEX  = 6;
+	
+    public static ForkJoinPool fjPool = new ForkJoinPool();
+	static final int SEQUENTIAL_CUTOFF= 1000;
+
+	
 	
 	// the number of columns and rows 
 	private static int xBuckets;
@@ -114,6 +120,8 @@ public class PopulationQuery {
 		yBuckets = y;
 		cd = parse(filename);
     	
+		if (cd.data_size < SEQUENTIAL_CUTOFF) {
+		
 		longMin = cd.data[0].longitude;
 		longMax = cd.data[0].longitude; 
 		latMin = cd.data[0].latitude;
@@ -125,7 +133,15 @@ public class PopulationQuery {
 			latMin = Math.min(cg.latitude, latMin);
 			latMax = Math.max(cg.latitude, latMax);
 		}
-		
+			
+		} else {
+			ParallelCorners pc = new ParallelCorners(0, cd.data_size, cd.data);
+			Corner c = fjPool.invoke(pc);
+			longMin = c.longMin;
+			longMax = c.longMax;
+			latMin = c.latMin;
+			latMax = c.latMax;		
+		}
 		//Rectangle us = new Rectangle(longMin, longMax, latMax, longMin);
     }
     
@@ -145,19 +161,25 @@ public class PopulationQuery {
 		float bottom = (south - 1) * yBucketSize + latMin;
 		float top = north * yBucketSize + latMin;
 		Rectangle rec = new Rectangle(left, right, top, bottom);
-		int totalPop = 0;
-		int recPop = 0;
-		for (int i = 0; i < cd.data_size; i++) {
-			CensusGroup group = cd.data[i];
-			Point2D.Float point = new Point2D.Float(group.longitude, group.latitude);
-			if (rec.insideRectangle(point)) {
-				recPop += group.population;
-			}
-			totalPop += group.population;
+		if (cd.data_size < SEQUENTIAL_CUTOFF) {
+			int totalPop = 0;
+			int recPop = 0;
+			for (int i = 0; i < cd.data_size; i++) {
+				CensusGroup group = cd.data[i];
+				Point2D.Float point = new Point2D.Float(group.longitude, group.latitude);
+				if (rec.insideRectangle(point)) {
+					recPop += group.population;
+				}
+				totalPop += group.population;
 		}
 		float percent = (recPop / (float) totalPop) * 100 ;
-    	
     	return new Pair<Integer, Float>(recPop, percent);
+		} else {
+			ParallelQuery pq = new ParallelQuery(0, cd.data_size, cd.data, rec);
+			popHold p = fjPool.invoke(pq);
+			float percent = (p.recPop / (float) p.totalPop)* 100;
+			return new Pair<Integer, Float>(p.recPop, percent);
+		}
     }
     
 	// argument 1: file name for input data: pass this to parse
