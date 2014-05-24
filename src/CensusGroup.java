@@ -1,6 +1,9 @@
 
 
-
+/**
+ * holds data for one line from a census data file.
+ * the latitude and longitude, and the population at that point.
+ */
 public class CensusGroup {
 	public int   population;
 	public float realLatitude;
