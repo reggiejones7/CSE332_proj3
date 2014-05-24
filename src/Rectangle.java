@@ -29,7 +29,7 @@ public class Rectangle {
 	
 	//returns boolean of if a point is in a triangle
 	public boolean insideRectangle(Point2D.Float point) {
-		if (point.x >= left && point.x < right && point.y >= bottom && point.y < top) {
+		if (point.x >= left && point.x <= right && point.y >= bottom && point.y <= top) {
 			return true;
 		}
 		return false;
