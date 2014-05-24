@@ -20,6 +20,13 @@ public class ParallelCorners extends RecursiveTask<Rectangle> {
 		this(lo, hi, arr, SEQUENTIAL_CUTOFF);
 	}
 	
+	/**
+	 * 
+	 * @param lo the lowest bound of the array
+	 * @param hi the highest bound of the array
+	 * @param arr the array we are parsing the data of
+	 * @param cutoff the sequential cut off value to use 
+	 */
 	public ParallelCorners(int lo, int hi, CensusGroup[] arr, int cutoff) {
 		this.array = arr;
 		this.lo = lo;
@@ -27,6 +34,9 @@ public class ParallelCorners extends RecursiveTask<Rectangle> {
 		sequentialCutoff = cutoff;
 	}
 	
+	/**
+	 * does the work of finding the corners of the given array 
+	 */
 	@Override
 	protected Rectangle compute() {
 		if (hi - lo > sequentialCutoff) {
