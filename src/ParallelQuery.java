@@ -17,7 +17,13 @@ public class ParallelQuery extends RecursiveTask<Pair<Integer, Integer>> {
 	private Rectangle rec;
 	private CensusGroup[] array;
 	
-	
+	/**
+	 * contructs a ParallelQuery and instantiates fields
+	 * @param lo the lowest bound of the array
+	 * @param hi the hightest bound of the array
+	 * @param arr the array we are checking
+	 * @param rec the query rectangle we are checking inside of
+	 */
 	public ParallelQuery(int lo, int hi, CensusGroup[] arr, Rectangle rec) {
 		this.array = arr;
 		this.lo = lo;
@@ -25,7 +31,11 @@ public class ParallelQuery extends RecursiveTask<Pair<Integer, Integer>> {
 		this.rec = rec;
 	}
 	
-
+	/**
+	 * does the work of computing the populations
+	 * @return pair of Integers where the first represents the total population 
+	 * 			and the second represents the total population within the rectangle
+	 */
 	@Override
 	protected Pair<Integer, Integer> compute() {
 		if (hi - lo > SEQUENTIAL_CUTOFF) {
