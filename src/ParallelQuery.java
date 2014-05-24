@@ -5,10 +5,9 @@ import java.util.concurrent.RecursiveTask;
  * Reggie Jones & Tristan Riddell
  *  
  * ParallellQuery traverses the data and returns a pair containing 
- * the population of a given rectangle, and the percentage of the total population
- * represented in the rectangle.
+ * the population of a given rectangle, and the total population of the datafile
  * 
- * Uses either parallelism or sequentialism depending on how it is constructed
+ * Uses either parallelism or sequentialism.
  */
 public class ParallelQuery extends RecursiveTask<Pair<Integer, Integer>> {
 	
@@ -43,6 +42,17 @@ public class ParallelQuery extends RecursiveTask<Pair<Integer, Integer>> {
 		}
 	}
 	
+	/**
+	 * sequentialPopulation uses sequentialism to find the population 
+	 * of the rectangle. It is used by the parallel compute() method
+	 * when the sequential cutoff is reached, or used for the entire 
+	 * data file when PopulationQuery is run with version v1
+	 * @param low the lower bound of the array to be calculated
+	 * @param high the upper bound of the array chunk to be calculated
+	 * 
+	 * @returns a pair of values : total population of datafile,
+	 * and population within rectangle.
+	 */
 	public Pair<Integer, Integer> sequentialPopulation(int low, int high ) {
 		int totalPop = 0;
 		int recPop = 0;
