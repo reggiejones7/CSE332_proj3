@@ -1,6 +1,17 @@
 import java.awt.geom.Point2D;
 import java.util.concurrent.RecursiveTask;
+
+/**
+ * Reggie Jones & Tristan Riddell
+ *  
+ * ParallellQuery traverses the data and returns a pair containing 
+ * the population of a given rectangle, and the percentage of the total population
+ * represented in the rectangle.
+ * 
+ * Uses either parallelism or sequentialism depending on how it is constructed
+ */
 public class ParallelQuery extends RecursiveTask<Pair<Integer, Integer>> {
+	
 	private static final int SEQUENTIAL_CUTOFF = 1000;
 	
 	private int lo, hi;
