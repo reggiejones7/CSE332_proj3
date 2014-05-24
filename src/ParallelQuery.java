@@ -19,17 +19,13 @@ public class ParallelQuery extends RecursiveTask<Pair<Integer, Integer>> {
 	private CensusGroup[] array;
 	private int sequentialCutoff;
 	
-	public ParallelQuery(int lo, int hi, CensusGroup[] arr, Rectangle rec, int cutoff) {
+	public ParallelQuery(int lo, int hi, CensusGroup[] arr, Rectangle rec) {
 		this.array = arr;
 		this.lo = lo;
 		this.hi = hi;
 		this.rec = rec;
-		sequentialCutoff = cutoff;
 	}
 	
-	public ParallelQuery(int lo, int hi, CensusGroup[] arr, Rectangle rec) {
-		this(lo, hi, arr, rec, SEQUENTIAL_CUTOFF);
-	}
 
 	@Override
 	protected Pair<Integer, Integer> compute() {
