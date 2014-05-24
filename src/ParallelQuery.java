@@ -6,7 +6,6 @@ public class ParallelQuery extends RecursiveTask<Pair<Integer, Integer>> {
 	private int lo, hi;
 	private Rectangle rec;
 	private CensusGroup[] array;
-	private int sequentialCutoff;
 	
 	public ParallelQuery(int lo, int hi, CensusGroup[] arr, Rectangle rec) {
 		this.array = arr;
@@ -18,7 +17,7 @@ public class ParallelQuery extends RecursiveTask<Pair<Integer, Integer>> {
 
 	@Override
 	protected Pair<Integer, Integer> compute() {
-		if (hi - lo > sequentialCutoff) {
+		if (hi - lo > SEQUENTIAL_CUTOFF) {
 			ParallelQuery left = new ParallelQuery(lo, (hi+lo)/2, array, rec);
 			ParallelQuery right = new ParallelQuery((hi+lo)/2, hi, array, rec);
 			left.fork();
