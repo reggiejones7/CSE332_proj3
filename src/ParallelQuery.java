@@ -47,6 +47,9 @@ public class ParallelQuery extends RecursiveTask<Pair<Integer, Integer>> {
 	 * of the rectangle. It is used by the parallel compute() method
 	 * when the sequential cutoff is reached, or used for the entire 
 	 * data file when PopulationQuery is run with version v1
+	 * @param low the lower bound of the array to be calculated
+	 * @param high the upper bound of the array chunk to be calculated
+	 * 
 	 * @returns a pair of values : total population of datafile,
 	 * and population within rectangle.
 	 */

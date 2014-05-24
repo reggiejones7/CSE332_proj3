@@ -1,5 +1,15 @@
 import java.util.concurrent.RecursiveTask;
+
+/**
+ * Reggie Jones & Tristan Riddell
+ *  
+ * ParallellCorners traverses the data and returns a rectangle containing 
+ * the minimum and maximum longitude and latitude found in the array of CensusGroups.
+ * 
+ * Uses either parallelism or sequentialism depending on how it is constructed.
+ */
 public class ParallelCorners extends RecursiveTask<Rectangle> {
+
 	private static final int SEQUENTIAL_CUTOFF = 1000;
 	
 	private int lo, hi;
@@ -38,7 +48,5 @@ public class ParallelCorners extends RecursiveTask<Rectangle> {
 			}
 			return rec;
 		}
-		
 	}
-
 }
