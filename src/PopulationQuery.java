@@ -1,5 +1,4 @@
 
-import java.awt.geom.Point2D;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
@@ -13,7 +12,11 @@ import java.util.concurrent.ForkJoinPool;
  * Project 3
  * TA: Hye In Kim
  * 
- * --fill in class description...--
+ * PopulationQuery accepts a filename of a file with government population census data
+ *  and x/y coordinates of a grid as program arguments,
+ *   then a set of four coordinates of the grid from the command line.
+ * It prints the population within the given rectangle, and the percentage
+ * of the total population of the rectangle compared to the entire data file.
  *
  */
 
@@ -29,6 +32,7 @@ public class PopulationQuery {
 	// the number of columns and rows in a query
 	private static int xBuckets;
 	private static int yBuckets;
+	
 	//the data parsed from the file given by client in preprocess
 	private static CensusData cd;
 	
@@ -42,6 +46,7 @@ public class PopulationQuery {
 		
         try {
             BufferedReader fileIn = new BufferedReader(new FileReader(filename));
+            
             
             // Skip the first line of the file
             // After that each line has 7 comma-separated numbers (see constants above)
@@ -104,7 +109,15 @@ public class PopulationQuery {
 		}
     }
     
-    
+    /**
+     * preprocess accepts the runtime arguments as parameters and creates a 
+     * Rectangle object which represents the four corners of the map 
+     * according to the provided data file.
+     * @param filename the name of the file of data to use
+     * @param x the number of columns in the grid 
+     * @param y the number of rows in the grid
+     * @param versionNum the method of processing and data parsing to use
+     */
     public static void preprocess(String filename, int x, int y, int versionNum) {
     	//The arguments to the preprocess method are the same arguments that should be passed via
     	//the command line to the main method in PopulationQuery, only parsed into their datatypes 
@@ -125,15 +138,22 @@ public class PopulationQuery {
 		map = r;
     }
     
-    //returns Pair<total population of query, percent of pop in query / total pop of country>
-    public static Pair<Integer, Float> singleInteraction(int west, int south, 
+    /**
+     * singleInteraction accepts 4 ints which represent a rectangle within the grid
+     * and returns the population within that rectangle, and the percentage 
+     * of the total population within that rectangle.
+     * @param west the farthest west column of the rectangle
+     * @param south the farthest south row of the rectangle
+     * @param east the farthest east column of the rectangle
+     * @param north the farthest north row of the rectangle
+     * @returns a pair of values: the population in the rectangle,
+     * and the percentage of the population within the rectangle.
+     */
+    public static Pair<Integer, Float> singleInteraction(int west, int south,
     													 int east, int north) {
-    	//The arguments to the singleInteraction method are the arguments that are passed to the 
-    	//program when it prompts for query input. This method should determine the population 
-    	//size and the population percentage of the U.S. given the parameters, just as your program 
-    	//should when given integers at the prompt.
+    
     	checkQueryInputs(west, south, east, north);
-    	
+   
     	float longMin = map.left;
     	float longMax = map.right;
     	float latMin = map.bottom;
@@ -159,10 +179,18 @@ public class PopulationQuery {
 		return new Pair<Integer, Float>(p.getElementB(), percent);
     }
     
-	// argument 1: file name for input data: pass this to parse
-	// argument 2: number of x-dimension buckets
-	// argument 3: number of y-dimension buckets
-	// argument 4: -v1, -v2, -v3, -v4, or -v5
+    /*
+     * the main method handles accepting the runtime arguments 
+     * and calling the necessary methods to parse the datafile correctly.
+     * queries the user for coordinates, then prints the population 
+     * and percent of total population of the rectangle.
+     * 
+     * argument 1: file name for input data: pass this to parse
+	 * argument 2: number of x-dimension buckets
+	 * argument 3: number of y-dimension buckets
+	 * argument 4: -v1, -v2, -v3, -v4, or -v5
+     */
+
 	public static void main(String[] args) {
 		if (args.length != 4) {
 			argError("length");
