@@ -17,6 +17,7 @@ public class ParallelQuery extends RecursiveTask<Pair<Integer, Integer>> {
 	private Rectangle rec;
 	private CensusGroup[] array;
 	
+	
 	public ParallelQuery(int lo, int hi, CensusGroup[] arr, Rectangle rec) {
 		this.array = arr;
 		this.lo = lo;
