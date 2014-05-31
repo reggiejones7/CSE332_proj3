@@ -4,13 +4,14 @@ import java.util.concurrent.ForkJoinPool;
 public class V2SequentialTest {
     public static ForkJoinPool fjPool = new ForkJoinPool();
     public static int WARM_UP = 1000;
-    public static int TESTS = 5000;
+    public static int TESTS = 1000;
     
 	public static void main(String[] args) {
 		CensusData cd = PopulationQuery.parse("CenPop2010.txt");
-		int cutOff = cd.data_size;
+		System.out.println(cd.data_size);
+		int cutOff = 1;
 		ParallelCorners pc;
-		while (cutOff >= 1) {
+		while (cutOff <= cd.data_size) {
 			double totalTime = 0;
 			for (int i = 0; i < (WARM_UP + TESTS); i++) {
 				long startTime = System.currentTimeMillis();
@@ -23,9 +24,16 @@ public class V2SequentialTest {
 				}
 			}
 			double avgTime = totalTime / (double)TESTS;
-			System.out.println("avg time with cut off " + cutOff + " is: " + avgTime);
-			cutOff = cutOff / 2;
+			//System.out.println("avg time with cut off " + cutOff + " is: " + avgTime);
+			System.out.println(avgTime);
+			if (cutOff == cd.data_size) {
+				cutOff += 1;
+			} else {
+				cutOff += 1000;
+				if (cutOff > cd.data_size) {
+					cutOff = cd.data_size;
+				}
+			}
 		}
-
 	}
 }
