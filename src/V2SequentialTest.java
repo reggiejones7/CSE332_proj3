@@ -4,12 +4,12 @@ import java.util.concurrent.ForkJoinPool;
 public class V2SequentialTest {
     public static ForkJoinPool fjPool = new ForkJoinPool();
     public static int WARM_UP = 1000;
-    public static int TESTS = 1000;
+    public static int TESTS = 5000;
     
 	public static void main(String[] args) {
 		CensusData cd = PopulationQuery.parse("CenPop2010.txt");
 		System.out.println(cd.data_size);
-		int cutOff = 1;
+		int cutOff = 1000;
 		ParallelCorners pc;
 		while (cutOff <= cd.data_size) {
 			double totalTime = 0;
