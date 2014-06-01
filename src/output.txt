@@ -1,0 +1,19 @@
+Please give west, south, east, north coordinates of your query rectangle:
+population of rectangle: 1360301
+percent of total population: 0.44
+Please give west, south, east, north coordinates of your query rectangle:
+population of rectangle: 710231
+percent of total population: 0.23
+Please give west, south, east, north coordinates of your query rectangle:
+population of rectangle: 310400795
+percent of total population: 99.34
+Please give west, south, east, north coordinates of your query rectangle:
+population of rectangle: 312471327
+percent of total population: 100.00
+Please give west, south, east, north coordinates of your query rectangle:
+population of rectangle: 36493611
+percent of total population: 11.68
+Please give west, south, east, north coordinates of your query rectangle:
+population of rectangle: 52392739
+percent of total population: 16.77
+Please give west, south, east, north coordinates of your query rectangle:

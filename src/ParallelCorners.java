@@ -52,8 +52,8 @@ public class ParallelCorners extends RecursiveTask<Rectangle> {
 											array[lo].latitude, array[lo].latitude);
 			for (int i = lo; i < hi; i++) { 
 				CensusGroup cg = array[i];
-				Rectangle nextRec = new Rectangle(array[i].longitude, array[i].longitude,
-						array[i].latitude, array[i].latitude);
+				Rectangle nextRec = new Rectangle(cg.longitude, cg.longitude,
+						cg.latitude, cg.latitude);
 				rec = rec.encompass(nextRec);
 			}
 			return rec;

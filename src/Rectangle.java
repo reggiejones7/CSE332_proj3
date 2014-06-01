@@ -42,11 +42,32 @@ public class Rectangle {
 	 * @returns true if the point is in the rectangle, else false.
 	 */
 	public boolean insideRectangle(Point2D.Float point) {
+		//todo: fix this so that if a point lies on the top or right
+		//boundary it doesnt get counted twice
 		if (point.x >= left && point.x <= right && point.y >= bottom && point.y <= top) {
 			return true;
 		}
 		return false;
 	}
+	
+	//calculate a rectangle based on its given coordinates, the us map, and number
+	//of x and y buckets that the user provided.
+	public static Rectangle makeRectangle(int west, int south, int east, int north,
+											Rectangle map, int xBuckets, int yBuckets) {
+    	float longMin = map.left;
+    	float longMax = map.right;
+    	float latMin = map.bottom;
+    	float latMax = map.top;
+    	
+    	float xBucketSize = Math.abs((longMax - longMin) / xBuckets);
+		float yBucketSize = Math.abs((latMax - latMin) / yBuckets);
+		float left = (west - 1) * xBucketSize + longMin;
+		float right = east * xBucketSize + longMin;
+		float bottom = (south - 1) * yBucketSize + latMin;
+		float top = north * yBucketSize + latMin;
+		
+		return new Rectangle(left, right, top, bottom);
+    }
 	
 	public String toString() {
 		return "[left=" + left + " right=" + right + " top=" + top + " bottom=" + bottom + "]";

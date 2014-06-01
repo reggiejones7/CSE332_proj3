@@ -1,4 +1,5 @@
 
+import java.awt.geom.Point2D;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
@@ -35,17 +36,23 @@ public class PopulationQuery {
 	
 	//the data parsed from the file given by client in preprocess
 	private static CensusData cd;
+	//version number the client specifies
+	private static int version;
 	
 	//largest rectangle from cd, e.g. map of the U.S.
 	private static Rectangle map;
-	private static int version;
+	
+	//grid used for v3-5
+	private static int[][] grid;
+	
 	
 	// parse the input file into a large array held in a CensusData object
 	public static CensusData parse(String filename) {
 		CensusData result = new CensusData();
 		
         try {
-            BufferedReader fileIn = new BufferedReader(new FileReader(filename));
+            @SuppressWarnings("resource")
+			BufferedReader fileIn = new BufferedReader(new FileReader(filename));
             
             
             // Skip the first line of the file
@@ -127,15 +134,61 @@ public class PopulationQuery {
 		yBuckets = y;
 		version = versionNum;
 		cd = parse(filename);
-    	
-		ParallelCorners pc;
-		if (versionNum == 1) {
+		
+		//find corners-store in map
+		ParallelCorners pc = null;
+		if (version == 1 || version == 3) {
 			pc = new ParallelCorners(0, cd.data_size, cd.data, cd.data_size);
-		} else {
+		} else if (version == 2 || version == 4 || version == 5) {
 			pc = new ParallelCorners(0, cd.data_size, cd.data);
 		}
 		Rectangle r = fjPool.invoke(pc);
 		map = r;
+		
+		//additional preprocessing steps for v3-4
+		if (version == 3 || version == 4 || version == 5) {
+			if (version == 3 || version == 4) {
+				BuildGridData data = new BuildGridData(xBuckets, yBuckets, cd.data, map);
+				BuildGrid bg = new BuildGrid(0, cd.data_size, data);
+				if (version == 3) {
+					grid = bg.sequentialBuildGrid(0, cd.data_size, data);
+				}
+				if (version == 4) {
+					grid = fjPool.invoke(bg);
+				}
+			} else {
+				//implicit version 5 branch
+				//todo: grid = .....;
+				
+				//Tristan- this is what needs to be implemented. v5 is just building grid using locks
+				//I already added the version5 to singleInteraction()
+				//and the finding corners above in this method (line 142 & 149)
+				//so other than right here I don't think you'll need add anything else
+				//inside this file unless you wanna!
+				
+				//still tippin on four fours..
+			}
+			
+
+			//step 2- update grid with single pass over the grid.
+			//every position in grid will now hold the total population for all
+			//positions that are neither farther east nor farther south
+			for (int y1 = 0; y1 < yBuckets; y1++) {
+				for (int x1 = 0; x1 < xBuckets; x1++) {
+					if (y1 != 0 || x1 != 0) { //leave first element as is
+						if (y1 == 0) { 
+							//top row
+							grid[y1][x1] += grid[y1][x1 - 1]; 
+						} else if (x1 == 0) {
+							//left column
+							grid[y1][x1] += grid[y1 - 1][x1]; 
+						} else {
+							grid[y1][x1] += grid[y1 - 1][x1] + grid[y1][x1 - 1] - grid[y1 - 1][x1 - 1];
+						}
+					}
+				}
+			}
+		}
     }
     
     /**
@@ -154,6 +207,47 @@ public class PopulationQuery {
     
     	checkQueryInputs(west, south, east, north);
    
+    	Rectangle queryRec = makeRectangle(west, south, east, north);
+    	
+		ParallelQuery pq = new ParallelQuery(0, cd.data_size, cd.data, queryRec);
+		Pair<Integer, Integer> p = null;
+		if (version == 1) {
+			p = pq.sequentialPopulation(0, cd.data_size);
+		} else if (version == 2) {
+			p = fjPool.invoke(pq);
+		} else if (version == 3 || version == 4 || version == 5) {
+			// all minus one because user is using 1 based index
+			int gridWest = west - 1;
+			int gridEast = east - 1;
+			int gridNorth = yBuckets - north;
+			int gridSouth = yBuckets - south;
+			
+			//to find population: pop of d = d - b - c + a 
+			//in the example of [a b
+			//					 c d]
+			int population = grid[gridSouth][gridEast];
+			if (gridNorth - 1 >= 0) {
+				population -= grid[gridNorth - 1][gridEast];
+			}
+			if (gridWest - 1 >= 0) {
+				population -= grid[gridSouth][gridWest - 1];
+			}
+			if ((gridNorth - 1 >= 0) && (gridWest - 1 >= 0)) {
+				population += grid[gridNorth - 1][gridWest - 1];
+			}
+			//totalPopulation will just be the bottom right entry of the grid
+			int totalPopulation = grid[yBuckets - 1][xBuckets - 1];
+			p = new Pair<Integer, Integer>(totalPopulation, population);
+		}
+		
+		float percent = (p.getElementB() / (float) p.getElementA())* 100;
+		return new Pair<Integer, Float>(p.getElementB(), percent);
+    }
+    
+    //todo; remove this and calls to this and replace with Rectangle.makeRectangle()
+    //returns rectangle inside of the map. the west south east north are integers
+    // that represent the coordinates in the map
+    private static Rectangle makeRectangle(int west, int south, int east, int north) {
     	float longMin = map.left;
     	float longMax = map.right;
     	float latMin = map.bottom;
@@ -165,18 +259,8 @@ public class PopulationQuery {
 		float right = east * xBucketSize + longMin;
 		float bottom = (south - 1) * yBucketSize + latMin;
 		float top = north * yBucketSize + latMin;
-		Rectangle rec = new Rectangle(left, right, top, bottom);
-			
-		ParallelQuery pq = new ParallelQuery(0, cd.data_size, cd.data, rec);
-		Pair<Integer, Integer> p;
-		if (version == 1) {
-			p = pq.sequentialPopulation(0, cd.data_size);
-		} else {
-			//v2
-			p = fjPool.invoke(pq);
-		}
-		float percent = (p.getElementB() / (float) p.getElementA())* 100;
-		return new Pair<Integer, Float>(p.getElementB(), percent);
+		
+		return new Rectangle(left, right, top, bottom);
     }
     
     /*
