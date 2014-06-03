@@ -47,6 +47,13 @@ public class Rectangle {
 		if (point.x >= left && point.x <= right && point.y >= bottom && point.y <= top) {
 			return true;
 		}
+		/*debugging println
+		System.out.println("point not included" + point.toString() + 
+				"\n top:" + top +
+				"\n left:" + left +
+				"\n bottom:" + bottom +
+				"\n right:" + right);
+		*/
 		return false;
 	}
 	

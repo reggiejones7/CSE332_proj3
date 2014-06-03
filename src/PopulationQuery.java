@@ -135,7 +135,7 @@ public class PopulationQuery {
 		version = versionNum;
 		cd = parse(filename);
 		
-		//find corners-store in map
+		//find corners- store as map variable	
 		ParallelCorners pc = null;
 		if (version == 1 || version == 3) {
 			pc = new ParallelCorners(0, cd.data_size, cd.data, cd.data_size);
@@ -253,13 +253,20 @@ public class PopulationQuery {
     	float latMin = map.bottom;
     	float latMax = map.top;
     	
-    	float xBucketSize = Math.abs((longMax - longMin) / xBuckets);
+    	/*float xBucketSize = Math.abs((longMax - longMin) / xBuckets);
 		float yBucketSize = Math.abs((latMax - latMin) / yBuckets);
 		float left = (west - 1) * xBucketSize + longMin;
 		float right = east * xBucketSize + longMin;
 		float bottom = (south - 1) * yBucketSize + latMin;
 		float top = north * yBucketSize + latMin;
-		
+		*/
+    	float x = Math.abs(longMax - longMin);
+		float y = Math.abs(latMax - latMin);
+		float left = ((west - 1) * x) / xBuckets + longMin;
+		float right = (east * x) / xBuckets + longMin;
+		float bottom = ((south - 1) * y) / yBuckets + latMin;
+		float top = (north * y) / yBuckets + latMin;
+    	
 		return new Rectangle(left, right, top, bottom);
     }
     
