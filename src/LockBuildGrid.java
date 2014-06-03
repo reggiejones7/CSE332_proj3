@@ -9,8 +9,6 @@ public class LockBuildGrid extends java.lang.Thread {
 	int lo;
 	int hi;
 	
-	//tristan: BuildGridData already had 2 grids in it. In PopulationQuery just modify the BuildGridData data
-	//to have these two grids instead of the grids they are used for v3-4.
 	public LockBuildGrid(Lock[][] lockGrid, int[][] grid, BuildGridData data, int lo, int hi) {
 		this.lockGrid = lockGrid;
 		this.grid = grid;

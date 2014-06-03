@@ -13,6 +13,7 @@ public class BuildGridData {
 	private CensusGroup[] input;
 	private int xBuckets;
 	private int yBuckets;
+	//The Rectangle of the (US) map
 	private Rectangle map;
 	
 	/**
@@ -30,32 +31,32 @@ public class BuildGridData {
 	}
 
 	/**
-	 * getter
-	 * @return xBuckets
+	 * a simple getter
+	 * @return xBuckets class field
 	 */
 	public int getXBuckets() {
 		return xBuckets;
 	}
 	
 	/**
-	 * getter
-	 * @return yBuckets
+	 * a simple getter
+	 * @return yBuckets class field
 	 */
 	public int getYBuckets() {
 		return yBuckets;
 	}
 	
 	/**
-	 * getter
-	 * @return input array
+	 * a simple getter
+	 * @return input array class field
 	 */
 	public CensusGroup[] getInput() {
 		return input;
 	}
 	
 	/**
-	 * getter
-	 * @return map the Rectangle of the country
+	 * a simple getter
+	 * @return map class field, a Rectangle of the country
 	 */
 	public Rectangle getMap() {
 		return map;
