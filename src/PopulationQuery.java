@@ -164,8 +164,8 @@ public class PopulationQuery {
 			} else {
 				int[][] tempGrid = new int[yBuckets][xBuckets];
 				Lock[][] lockGrid = new Lock[yBuckets][xBuckets];
-				for (int lockY = 0; y < yBuckets; y++) {
-					for (int lockX = 0; x < xBuckets; x++) {
+				for (int lockY = 0; lockY < yBuckets; lockY++) {
+					for (int lockX = 0; lockX < xBuckets; lockX++) {
 						lockGrid[lockY][lockX] = new ReentrantLock();
 					}
 				}

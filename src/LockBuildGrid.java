@@ -2,7 +2,7 @@ import java.awt.geom.Point2D;
 import java.util.concurrent.locks.Lock;
 
 
-class LockBuildGrid extends java.lang.Thread {
+public class LockBuildGrid extends java.lang.Thread {
 	Lock[][] lockGrid;
 	int[][] grid;
 	BuildGridData data;
@@ -10,7 +10,7 @@ class LockBuildGrid extends java.lang.Thread {
 	int hi;
 	
 	
-	LockBuildGrid(Lock[][] lockGrid, int[][] grid, BuildGridData data, int lo, int hi) {
+	public LockBuildGrid(Lock[][] lockGrid, int[][] grid, BuildGridData data, int lo, int hi) {
 		this.lockGrid = lockGrid;
 		this.grid = grid;
 		this.data = data;
