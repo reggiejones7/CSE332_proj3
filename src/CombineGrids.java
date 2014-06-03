@@ -32,8 +32,8 @@ public class CombineGrids extends RecursiveTask<int[][]> {
 			rightGrid = data.getGrid2();
 		}
 
-		int innerArraySize = data.getYBuckets();
-		int[][] combinedGrid = new int[data.getXBuckets()][data.getYBuckets()];
+		int innerArraySize = data.getXBuckets();
+		int[][] combinedGrid = new int[data.getYBuckets()][data.getXBuckets()];
 		for (int i = low; i < high; i++) {
 			int row = i / innerArraySize;
 			int col = (i % innerArraySize);
@@ -42,7 +42,20 @@ public class CombineGrids extends RecursiveTask<int[][]> {
 			} else {
 				col--;
 			}
-			combinedGrid[row][col] = leftGrid[row][col] + rightGrid[row][col];
+			try {
+				combinedGrid[row][col] = leftGrid[row][col] + rightGrid[row][col];
+			} catch (ArrayIndexOutOfBoundsException e) {
+				/*System.out.println(i % innerArraySize +
+						"\nrow:" + row + 
+						"col:"+  col + "\n" + 
+						leftGrid.length + "  " + rightGrid[0].length);
+				*/
+
+				for (int[] row1 : rightGrid) 
+				    System.out.println(java.util.Arrays.toString(row1));
+				
+				System.exit(1);
+			}
 		}
 		return combinedGrid;
 	}

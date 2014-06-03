@@ -45,7 +45,6 @@ public class BuildGrid extends RecursiveTask<int[][]> {
 		int xBuckets = data.getXBuckets();
 		int[][] grid = new int[yBuckets][xBuckets];
 		
-		
 		for (int i = low; i < high; i++) {
 			for (int y = 0; y < yBuckets; y++) {
 				for (int x = 0; x < xBuckets; x++) {
@@ -63,6 +62,10 @@ public class BuildGrid extends RecursiveTask<int[][]> {
 			}
 		}
 		
+		//debug statement
+		/*for (int[] row : grid) 
+		    System.out.println(java.util.Arrays.toString(row));
+		*/
 		return grid;
 	}
 
