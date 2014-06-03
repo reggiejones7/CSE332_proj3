@@ -2,6 +2,8 @@ import java.awt.geom.Point2D;
 
 
 /**
+ * Reggie Jones & Tristan Riddell
+ * 
  * Rectangle is an object that contains four float values representing 
  * the location of each corner.
  */
@@ -20,8 +22,6 @@ public class Rectangle {
 		bottom = b;
 	}
 	
-	// a functional operation: returns a new Rectangle that is the smallest rectangle
-	// containing this and that
 	/**
 	 * encompass finds a rectangle that is the smallest rectangle 
 	 * containing this and that
@@ -47,11 +47,29 @@ public class Rectangle {
 		if (point.x >= left && point.x <= right && point.y >= bottom && point.y <= top) {
 			return true;
 		}
+		/*debugging println
+		System.out.println("point not included" + point.toString() + 
+				"\n top:" + top +
+				"\n left:" + left +
+				"\n bottom:" + bottom +
+				"\n right:" + right);
+		*/
 		return false;
 	}
 	
-	//calculate a rectangle based on its given coordinates, the us map, and number
-	//of x and y buckets that the user provided.
+	/**
+	 * returns rectangle inside of the map. the west south east north are integers
+     * that represent the integer coordinates in the map. Useful for making
+     * a query rectangle.
+	 * @param west west coordinate
+	 * @param south south coordinate
+	 * @param east east coordinate
+	 * @param north north coordinate
+	 * @param map Rectangle of the country
+	 * @param xBuckets number of columns user specified
+	 * @param yBuckets number of rows user specified
+	 * @return Rectangle of 
+	 */
 	public static Rectangle makeRectangle(int west, int south, int east, int north,
 											Rectangle map, int xBuckets, int yBuckets) {
     	float longMin = map.left;

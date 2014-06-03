@@ -9,7 +9,6 @@ public class LockBuildGrid extends java.lang.Thread {
 	int lo;
 	int hi;
 	
-	
 	public LockBuildGrid(Lock[][] lockGrid, int[][] grid, BuildGridData data, int lo, int hi) {
 		this.lockGrid = lockGrid;
 		this.grid = grid;

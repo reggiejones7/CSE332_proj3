@@ -1,5 +1,4 @@
 
-import java.awt.geom.Point2D;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
@@ -37,12 +36,12 @@ public class PopulationQuery {
 	private static int xBuckets;
 	private static int yBuckets;
 	
-	//the data parsed from the file given by client in preprocess
+	//the data parsed from the file given by client
 	private static CensusData cd;
 	//version number the client specifies
 	private static int version;
 	
-	//largest rectangle from cd, e.g. map of the U.S.
+	//largest rectangle from CensusData, e.g. map of the U.S.
 	private static Rectangle map;
 	
 	//grid used for v3-5
@@ -126,34 +125,38 @@ public class PopulationQuery {
      * @param filename the name of the file of data to use
      * @param x the number of columns in the grid 
      * @param y the number of rows in the grid
-     * @param versionNum the method of processing and data parsing to use
+     * @param versionNum the version of processing and data parsing to use
      * @throws InterruptedException 
      */
-    public static void preprocess(String filename, int x, int y, int versionNum) throws InterruptedException {
-    	//The arguments to the preprocess method are the same arguments that should be passed via
-    	//the command line to the main method in PopulationQuery, only parsed into their datatypes 
-    	//and not as Strings. This method should read the file and prepare any data structures 
-    	//necessary for the given version of the program. 
+    public static void preprocess(String filename, int x, int y, int versionNum) 
+    		throws InterruptedException {
+    	//The arguments to the preprocess method are the same arguments that should 
+    	// be passed via the command line to the main method in PopulationQuery, 
+    	// only parsed into their datatypes and not as Strings. This method should 
+    	// read the file and prepare any data structures necessary for the 
+    	// given version of the program. 
+    	
     	xBuckets = x;
 		yBuckets = y;
 		version = versionNum;
 		cd = parse(filename);
 		
-		//find corners-store in map
-		ParallelCorners pc = null;
+		//find corners- store as map variable	
+		FindCorners pc = null;
 		if (version == 1 || version == 3) {
-			pc = new ParallelCorners(0, cd.data_size, cd.data, cd.data_size);
+			pc = new FindCorners(0, cd.data_size, cd.data, cd.data_size);
 		} else if (version == 2 || version == 4 || version == 5) {
-			pc = new ParallelCorners(0, cd.data_size, cd.data);
+			pc = new FindCorners(0, cd.data_size, cd.data);
 		}
 		Rectangle r = fjPool.invoke(pc);
 		map = r;
 		
-		//additional preprocessing steps for v3-4
+		//additional preprocessing steps for v3-5
 		if (version == 3 || version == 4 || version == 5) {
 			BuildGridData data = new BuildGridData(xBuckets, yBuckets, cd.data, map);
-			BuildGrid bg = new BuildGrid(0, cd.data_size, data);
+			
 			if (version == 3 || version == 4) {
+				BuildGrid bg = new BuildGrid(0, cd.data_size, data);
 
 				if (version == 3) {
 					grid = bg.sequentialBuildGrid(0, cd.data_size, data);
@@ -179,8 +182,6 @@ public class PopulationQuery {
 					lb[i].join();
 				}
 				grid = tempGrid;
-					
-				//still tippin on four fours.. << rofl
 			}
 			
 
@@ -221,14 +222,15 @@ public class PopulationQuery {
     
     	checkQueryInputs(west, south, east, north);
    
-    	Rectangle queryRec = makeRectangle(west, south, east, north);
+    	Rectangle queryRec = Rectangle.makeRectangle(west, south, east, north,
+    												map, xBuckets, yBuckets);
     	
-		ParallelQuery pq = new ParallelQuery(0, cd.data_size, cd.data, queryRec);
-		Pair<Integer, Integer> p = null;
+		FindPopulation findPop = new FindPopulation(0, cd.data_size, cd.data, queryRec);
+		Pair<Integer, Integer> pair = null;
 		if (version == 1) {
-			p = pq.sequentialPopulation(0, cd.data_size);
+			pair = findPop.sequentialPopulation(0, cd.data_size);
 		} else if (version == 2) {
-			p = fjPool.invoke(pq);
+			pair = fjPool.invoke(findPop);
 		} else if (version == 3 || version == 4 || version == 5) {
 			// all minus one because user is using 1 based index
 			int gridWest = west - 1;
@@ -251,33 +253,16 @@ public class PopulationQuery {
 			}
 			//totalPopulation will just be the bottom right entry of the grid
 			int totalPopulation = grid[yBuckets - 1][xBuckets - 1];
-			p = new Pair<Integer, Integer>(totalPopulation, population);
+			pair = new Pair<Integer, Integer>(totalPopulation, population);
 		}
 		
-		float percent = (p.getElementB() / (float) p.getElementA())* 100;
-		return new Pair<Integer, Float>(p.getElementB(), percent);
+		float percent = (pair.getElementB() / (float) pair.getElementA())* 100;
+		return new Pair<Integer, Float>(pair.getElementB(), percent);
     }
     
-    //todo; remove this and calls to this and replace with Rectangle.makeRectangle()
-    //returns rectangle inside of the map. the west south east north are integers
-    // that represent the coordinates in the map
-    private static Rectangle makeRectangle(int west, int south, int east, int north) {
-    	float longMin = map.left;
-    	float longMax = map.right;
-    	float latMin = map.bottom;
-    	float latMax = map.top;
-    	
-    	float xBucketSize = Math.abs((longMax - longMin) / xBuckets);
-		float yBucketSize = Math.abs((latMax - latMin) / yBuckets);
-		float left = (west - 1) * xBucketSize + longMin;
-		float right = east * xBucketSize + longMin;
-		float bottom = (south - 1) * yBucketSize + latMin;
-		float top = north * yBucketSize + latMin;
-		
-		return new Rectangle(left, right, top, bottom);
-    }
+   
     
-    /*
+    /**
      * the main method handles accepting the runtime arguments 
      * and calling the necessary methods to parse the datafile correctly.
      * queries the user for coordinates, then prints the population 
@@ -303,7 +288,6 @@ public class PopulationQuery {
 			argError(args[3]);
 		}
 		
-		/* pre process */
 		String filename = args[0];
 		int xBucket = Integer.parseInt(args[1]);
 		int yBucket = Integer.parseInt(args[2]);
@@ -332,6 +316,7 @@ public class PopulationQuery {
 				query = s.nextLine();
 				inputs = query.split(" ");
 			} catch (NumberFormatException e) {
+				System.out.print(e);
 				System.exit(1);
 			}
 		}

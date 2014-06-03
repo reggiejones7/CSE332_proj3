@@ -230,7 +230,13 @@ public class USMaps{
 	}
 	
 	public static void pqPreprocess(){
-		PopulationQuery.preprocess(FILENAME, 
-				mapPane.getColumns(), mapPane.getRows(), getVersionNum());
+		try {
+			PopulationQuery.preprocess(FILENAME, 
+					mapPane.getColumns(), mapPane.getRows(), getVersionNum());
+		} catch (InterruptedException e) {
+			System.out.println("Bummer");
+			e.printStackTrace();
+			System.exit(1);
+		}
 	}
 }

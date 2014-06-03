@@ -9,23 +9,23 @@ import java.util.concurrent.RecursiveTask;
  * 
  * Uses either parallelism or sequentialism.
  */
-public class ParallelQuery extends RecursiveTask<Pair<Integer, Integer>> {
+public class FindPopulation extends RecursiveTask<Pair<Integer, Integer>> {
 	
 	private static final int SEQUENTIAL_CUTOFF = 1000;
 	
 	private int lo, hi;
 	private Rectangle rec;
-	private CensusGroup[] array;
+	private CensusGroup[] input;
 	
 	/**
 	 * contructs a ParallelQuery and instantiates fields
 	 * @param lo the lowest bound of the array
 	 * @param hi the hightest bound of the array
-	 * @param arr the array we are checking
+	 * @param input the array we are checking
 	 * @param rec the query rectangle we are checking inside of
 	 */
-	public ParallelQuery(int lo, int hi, CensusGroup[] arr, Rectangle rec) {
-		this.array = arr;
+	public FindPopulation(int lo, int hi, CensusGroup[] input, Rectangle rec) {
+		this.input = input;
 		this.lo = lo;
 		this.hi = hi;
 		this.rec = rec;
@@ -39,8 +39,8 @@ public class ParallelQuery extends RecursiveTask<Pair<Integer, Integer>> {
 	@Override
 	protected Pair<Integer, Integer> compute() {
 		if (hi - lo > SEQUENTIAL_CUTOFF) {
-			ParallelQuery left = new ParallelQuery(lo, (hi+lo)/2, array, rec);
-			ParallelQuery right = new ParallelQuery((hi+lo)/2, hi, array, rec);
+			FindPopulation left = new FindPopulation(lo, (hi+lo)/2, input, rec);
+			FindPopulation right = new FindPopulation((hi+lo)/2, hi, input, rec);
 			left.fork();
 			Pair<Integer, Integer> rightA = right.compute();
 			Pair<Integer, Integer> leftA = left.join();
@@ -64,11 +64,11 @@ public class ParallelQuery extends RecursiveTask<Pair<Integer, Integer>> {
 	 * @returns a pair of values : total population of datafile,
 	 * and population within rectangle.
 	 */
-	public Pair<Integer, Integer> sequentialPopulation(int low, int high ) {
+	public Pair<Integer, Integer> sequentialPopulation(int low, int high) {
 		int totalPop = 0;
 		int recPop = 0;
 		for (int i = low; i < high; i++) {
-			CensusGroup group = array[i];
+			CensusGroup group = input[i];
 			Point2D.Float point = new Point2D.Float(group.longitude, group.latitude);
 			if (rec.insideRectangle(point)) {
 				recPop += group.population;
