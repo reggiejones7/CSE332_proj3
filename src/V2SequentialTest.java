@@ -10,12 +10,12 @@ public class V2SequentialTest {
 		CensusData cd = PopulationQuery.parse("CenPop2010.txt");
 		System.out.println(cd.data_size);
 		int cutOff = 1000;
-		ParallelCorners pc;
+		FindCorners pc;
 		while (cutOff <= cd.data_size) {
 			double totalTime = 0;
 			for (int i = 0; i < (WARM_UP + TESTS); i++) {
 				long startTime = System.currentTimeMillis();
-				pc = new ParallelCorners(0, cd.data_size, cd.data, cutOff);
+				pc = new FindCorners(0, cd.data_size, cd.data, cutOff);
 				Rectangle r = fjPool.invoke(pc);
 				long endTime = System.currentTimeMillis();
 				long theTime = endTime - startTime;

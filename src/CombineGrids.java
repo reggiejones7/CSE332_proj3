@@ -1,6 +1,20 @@
 import java.util.concurrent.ForkJoinPool;
 import java.util.concurrent.RecursiveTask;
 
+/**
+ * 
+ * @author Reggie Jones
+ * Reggie Jones & Tristan Riddel
+ * 
+ * CombineGrids adds the contents of two int[][] grids together at each
+ * index of the grid. Client should use low and high arguments in the constructor
+ * in a way that low should be the index of the first element of the grid and 
+ * high should be the last index of the grid (i.e. as if it were only 1 long array).
+ * (This is intentional as it will ensure that if a user gives a lopsided column and
+ * row amount such as 1 100 or 100 1 that combining the two grids in parallel keeps 
+ * the advantages of parallel computation)
+ *
+ */
 
 public class CombineGrids extends RecursiveTask<int[][]> {
 	public static final int SEQUENTIAL_CUTOFF = 1000;
@@ -8,14 +22,25 @@ public class CombineGrids extends RecursiveTask<int[][]> {
 	private int low, high;
 	private CombineGridsData data;
 	
-	//pre-condition:client should ensure grid1 and grid2 have the exact 
-	// same dimensions and be rectangular (i.e. M x N)
+	/**
+	 * Constructor
+	 * pre-condition:client should ensure grid1 and grid2 have the exact 
+	 * same dimensions as eachother and be rectangular (i.e. M x N)
+	 * @param low the low boundary for doing parralel computation on the grid
+	 * @param high the high boundary for doing parralel computation on the grid
+	 * @param data the CombineGridsData object that holds the constant data
+	 */
 	public CombineGrids(int low, int high, CombineGridsData data) {
 		this.low = low;
 		this.high = high;
 		this.data = data;
 	}
 	
+	/**
+	 * Combine 2 grids in parallel. Simply adding the two elements at each
+	 * index together.
+	 * @return int[][] a new grid of the 2 grids being combined (added together)
+	 */
 	@Override
 	protected int[][] compute() {
 		//parrallelizing on the grid as if the grid were 1 long array 
@@ -42,20 +67,7 @@ public class CombineGrids extends RecursiveTask<int[][]> {
 			} else {
 				col--;
 			}
-			try {
-				combinedGrid[row][col] = leftGrid[row][col] + rightGrid[row][col];
-			} catch (ArrayIndexOutOfBoundsException e) {
-				/*System.out.println(i % innerArraySize +
-						"\nrow:" + row + 
-						"col:"+  col + "\n" + 
-						leftGrid.length + "  " + rightGrid[0].length);
-				*/
-
-				for (int[] row1 : rightGrid) 
-				    System.out.println(java.util.Arrays.toString(row1));
-				
-				System.exit(1);
-			}
+			combinedGrid[row][col] = leftGrid[row][col] + rightGrid[row][col];
 		}
 		return combinedGrid;
 	}
