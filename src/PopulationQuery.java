@@ -6,6 +6,8 @@ import java.io.IOException;
 import java.util.Scanner;
 import java.util.regex.Pattern;
 import java.util.concurrent.ForkJoinPool;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 /**
  * 
@@ -27,6 +29,7 @@ public class PopulationQuery {
 	public static final int POPULATION_INDEX = 4; // zero-based indices
 	public static final int LATITUDE_INDEX   = 5;
 	public static final int LONGITUDE_INDEX  = 6;
+	public static final int LOCK_THREADS = 4;
 	
     public static ForkJoinPool fjPool = new ForkJoinPool();
 	
@@ -124,8 +127,9 @@ public class PopulationQuery {
      * @param x the number of columns in the grid 
      * @param y the number of rows in the grid
      * @param versionNum the method of processing and data parsing to use
+     * @throws InterruptedException 
      */
-    public static void preprocess(String filename, int x, int y, int versionNum) {
+    public static void preprocess(String filename, int x, int y, int versionNum) throws InterruptedException {
     	//The arguments to the preprocess method are the same arguments that should be passed via
     	//the command line to the main method in PopulationQuery, only parsed into their datatypes 
     	//and not as Strings. This method should read the file and prepare any data structures 
@@ -147,9 +151,10 @@ public class PopulationQuery {
 		
 		//additional preprocessing steps for v3-4
 		if (version == 3 || version == 4 || version == 5) {
+			BuildGridData data = new BuildGridData(xBuckets, yBuckets, cd.data, map);
+			BuildGrid bg = new BuildGrid(0, cd.data_size, data);
 			if (version == 3 || version == 4) {
-				BuildGridData data = new BuildGridData(xBuckets, yBuckets, cd.data, map);
-				BuildGrid bg = new BuildGrid(0, cd.data_size, data);
+
 				if (version == 3) {
 					grid = bg.sequentialBuildGrid(0, cd.data_size, data);
 				}
@@ -157,16 +162,25 @@ public class PopulationQuery {
 					grid = fjPool.invoke(bg);
 				}
 			} else {
-				//implicit version 5 branch
-				//todo: grid = .....;
-				
-				//Tristan- this is what needs to be implemented. v5 is just building grid using locks
-				//I already added the version5 to singleInteraction()
-				//and the finding corners above in this method (line 142 & 149)
-				//so other than right here I don't think you'll need add anything else
-				//inside this file unless you wanna!
-				
-				//still tippin on four fours..
+				int[][] tempGrid = new int[yBuckets][xBuckets];
+				Lock[][] lockGrid = new Lock[yBuckets][xBuckets];
+				for (int lockY = 0; lockY < yBuckets; lockY++) {
+					for (int lockX = 0; lockX < xBuckets; lockX++) {
+						lockGrid[lockY][lockX] = new ReentrantLock();
+					}
+				}
+				LockBuildGrid[] lb = new LockBuildGrid[4];
+				for (int i = 0; i < LOCK_THREADS; i++) {
+					lb[i] = new LockBuildGrid(lockGrid, tempGrid, data, 
+							(i*cd.data_size)/LOCK_THREADS, ((i+1) * cd.data_size) / LOCK_THREADS);
+					lb[i].start();
+				}
+				for (int i = 0; i < LOCK_THREADS; i++) {
+					lb[i].join();
+				}
+				grid = tempGrid;
+					
+				//still tippin on four fours.. << rofl
 			}
 			
 
@@ -282,7 +296,7 @@ public class PopulationQuery {
 	 * argument 4: -v1, -v2, -v3, -v4, or -v5
      */
 
-	public static void main(String[] args) {
+	public static void main(String[] args) throws InterruptedException {
 		if (args.length != 4) {
 			argError("length");
 		}
