@@ -1,8 +1,16 @@
 
 
 /**
+ * Reggie Jones & Tristan Riddell
+ * Project 3
+ * 
  * holds data for one line from a census data file.
  * the latitude and longitude, and the population at that point.
+ * 
+ * If you would like to use mercatorConversion for the latitude then
+ * only specify population, latitude, and longitude in constructor. If
+ * you would like to use the exact latitude given (for testing purposes)
+ * also specify the test argument to be true in the constructor 
  */
 public class CensusGroup {
 	public int   population;
@@ -37,6 +45,7 @@ public class CensusGroup {
 		}
 	}
 	
+	//excluding comment as we did not write this code
 	private float mercatorConversion(float lat){
 		float latpi = (float)(lat * Math.PI / 180);
 		float x = (float)Math.log(Math.tan(latpi) + 1 / Math.cos(latpi));

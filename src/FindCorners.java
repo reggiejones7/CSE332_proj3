@@ -7,7 +7,9 @@ import java.util.concurrent.RecursiveTask;
  * the minimum and maximum longitude and latitude found in the
  * input array of CensusGroups.
  * 
- * Uses either parallelism or sequentialism depending on how it is constructed.
+ * Uses either parallelism or sequentialism depending on how it is constructed-
+ * if you want to explicitly use sequentialismthen add the length of the input array
+ * as the cutoff argument in the constructor. Otherwise, dont specify this argument.
  */
 public class FindCorners extends RecursiveTask<Rectangle> {
 

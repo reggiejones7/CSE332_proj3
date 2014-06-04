@@ -6,8 +6,9 @@ import java.util.concurrent.RecursiveTask;
  *  
  * ParallellQuery traverses the data and returns a pair containing 
  * the population of a given rectangle, and the total population of the datafile
+ * that was parsed
  * 
- * Uses either parallelism or sequentialism.
+ * Can use both parallelism or sequentialism.
  */
 public class FindPopulation extends RecursiveTask<Pair<Integer, Integer>> {
 	
