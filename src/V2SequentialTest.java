@@ -1,5 +1,10 @@
 import java.util.concurrent.ForkJoinPool;
-
+/**
+ * 
+ * @author tristan
+ * times v2's preprocess method using an increasing sequential cut off
+ * 
+ */
 
 public class V2SequentialTest {
     public static ForkJoinPool fjPool = new ForkJoinPool();
