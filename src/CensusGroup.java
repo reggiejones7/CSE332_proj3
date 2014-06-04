@@ -13,6 +13,7 @@ public class CensusGroup {
 		population = pop;
 		realLatitude = lat;
 		latitude   = mercatorConversion(lat);
+		//latitude = lat; //uncomment this line when testing
 		longitude  = lon;
 	}
 	

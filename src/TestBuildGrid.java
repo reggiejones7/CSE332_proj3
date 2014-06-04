@@ -50,4 +50,31 @@ public class TestBuildGrid {
 		assertEquals(grid[2][1], 10);
 		assertEquals(grid[3][0], 1);
 	}
+	
+
+	/**
+	 * In order this to actually run in parallel, SEQUENTIAL_CUTOFF in BuildGrid by hand 
+	 * to a small number such as 1. I considered adding functionality to that class
+	 * to be able to change the cutoff through a call, but that class is just going
+	 * to keep getting bloated with code only for testing purposes which seems like
+	 * bad design choice. 
+	 */
+	
+	@Test
+	public void test_parallel_BuildGrid() {
+		//have to uncomment line in CensusGroup constructor in order to use real latitude
+		//to get this to pass
+		bg = new BuildGrid(0, cg.length, data);
+		
+		int[][] grid = fjPool.invoke(bg);
+		//debug println
+		for (int[] row : grid) {
+			System.out.println(Arrays.toString(row));
+		}
+		assertEquals(grid[0][3], 1000);
+		assertEquals(grid[1][2], 100);
+		assertEquals(grid[2][1], 10);
+		assertEquals(grid[3][0], 1);
+	}
+	
 }

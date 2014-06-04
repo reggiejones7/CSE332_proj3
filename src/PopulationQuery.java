@@ -142,13 +142,13 @@ public class PopulationQuery {
 		cd = parse(filename);
 		
 		//find corners- store as map variable	
-		FindCorners pc = null;
+		FindCorners findC = null;
 		if (version == 1 || version == 3) {
-			pc = new FindCorners(0, cd.data_size, cd.data, cd.data_size);
+			findC = new FindCorners(0, cd.data_size, cd.data, cd.data_size);
 		} else if (version == 2 || version == 4 || version == 5) {
-			pc = new FindCorners(0, cd.data_size, cd.data);
+			findC = new FindCorners(0, cd.data_size, cd.data);
 		}
-		Rectangle r = fjPool.invoke(pc);
+		Rectangle r = fjPool.invoke(findC);
 		map = r;
 		
 		//additional preprocessing steps for v3-5
