@@ -47,6 +47,7 @@ public class FindPopulation extends RecursiveTask<Pair<Integer, Integer>> {
 			
 			int newTotal = rightA.getElementA() + leftA.getElementA();
 			int newGroup = rightA.getElementB() + leftA.getElementB();
+
 			return new Pair<Integer, Integer>(newTotal, newGroup);
 		} else {
 			return sequentialPopulation(lo, hi);

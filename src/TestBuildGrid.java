@@ -10,7 +10,8 @@ import org.junit.Test;
  * @author Reggie Jones
  * Project 3
  * Tests the BuildGrid with a small input size
- *
+ * 
+ * Note: ignores mercator conversion by adding true to CensusGroup constructors
  */
 
 public class TestBuildGrid {
@@ -40,10 +41,7 @@ public class TestBuildGrid {
 	@Test
 	public void test_sequentialBuildGrid() {
 		int[][] grid = BuildGrid.sequentialBuildGrid(0, cg.length, data);
-		/*debug println
-		 for (int[] row : grid) {
-			System.out.println(Arrays.toString(row));
-		}*/
+
 		assertEquals(grid[0][3], 1000);
 		assertEquals(grid[1][2], 100);
 		assertEquals(grid[2][1], 10);
@@ -53,7 +51,7 @@ public class TestBuildGrid {
 
 	/**
 	 * In order this to actually run in parallel, SEQUENTIAL_CUTOFF in BuildGrid by hand 
-	 * to a small number such as 1. 
+	 * to a small number such as 1 (as suggested in the spec). 
 	 */
 	
 	@Test

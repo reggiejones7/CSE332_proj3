@@ -10,13 +10,13 @@ import org.junit.Test;
  * @author Reggie Jones
  * Test FindCorners class with some pretty small and basic inputs
  * 
- * NOTE: ignored mercator conversion by giving true as argument
+ * NOTE: ignores mercator conversion by giving true as argument
  * to CensusGroup constructors
  */
 public class TestFindCorners {
 	public static ForkJoinPool fjPool = new ForkJoinPool();
-	CensusGroup[] cg;
-	FindCorners findC;
+	private CensusGroup[] cg;
+	private FindCorners findC;
 	
 	@Before
 	public void setUp() {

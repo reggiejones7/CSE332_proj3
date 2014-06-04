@@ -42,7 +42,6 @@ public class TestLockGrid {
 	
 	@Test
 	public void test_sequentialBuildGrid() throws InterruptedException {
-		//build whole grid
 		int[][] grid = BuildGrid.sequentialBuildGrid(0, cg.length, data);
 		int[][] tempGrid = new int[10][10];
 		Lock[][] lockGrid = new Lock[10][10];
@@ -60,9 +59,6 @@ public class TestLockGrid {
 		for (int i = 0; i < 4; i++) {
 			lb[i].join();
 		}
-		 for (int[] row : grid) {
-			System.out.println(Arrays.toString(row));
-		 }
-		 	assertEquals(grid[3][0], 5500);
+	 	assertEquals(grid[3][0], 5500);
 	}
 }
