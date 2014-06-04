@@ -29,17 +29,17 @@ public class TestBuildGrid {
 		  1 _  _   _]
 		 */
 		cg = new CensusGroup[4];
-		cg[0] = new CensusGroup(1, 1, 1);
-		cg[1] = new CensusGroup(10, 2, 2);
-		cg[2] = new CensusGroup(100, 3, 3);
-		cg[3] = new CensusGroup(1000, 4, 4); 
+		cg[0] = new CensusGroup(1, 1, 1, true);
+		cg[1] = new CensusGroup(10, 2, 2, true);
+		cg[2] = new CensusGroup(100, 3, 3, true);
+		cg[3] = new CensusGroup(1000, 4, 4, true); 
 		map = new Rectangle(0, 5, 5, 0);
 		data = new BuildGridData(4, 4, cg, map);
 	}
 	
 	@Test
 	public void test_sequentialBuildGrid() {
-		int[][] grid = BuildGrid.sequentialBuildGrid(true, 0, cg.length, data);
+		int[][] grid = BuildGrid.sequentialBuildGrid(0, cg.length, data);
 		/*debug println
 		 for (int[] row : grid) {
 			System.out.println(Arrays.toString(row));
@@ -53,23 +53,14 @@ public class TestBuildGrid {
 
 	/**
 	 * In order this to actually run in parallel, SEQUENTIAL_CUTOFF in BuildGrid by hand 
-	 * to a small number such as 1. I considered adding functionality to that class
-	 * to be able to change the cutoff through a call, but that class is just going
-	 * to keep getting bloated with code only for testing purposes which seems like
-	 * bad design choice. 
+	 * to a small number such as 1. 
 	 */
 	
 	@Test
 	public void test_parallel_BuildGrid() {
-		//have to uncomment line in CensusGroup constructor in order to use real latitude
-		//to get this to pass
 		bg = new BuildGrid(0, cg.length, data);
-		
 		int[][] grid = fjPool.invoke(bg);
-		//debug println
-		for (int[] row : grid) {
-			System.out.println(Arrays.toString(row));
-		}
+
 		assertEquals(grid[0][3], 1000);
 		assertEquals(grid[1][2], 100);
 		assertEquals(grid[2][1], 10);

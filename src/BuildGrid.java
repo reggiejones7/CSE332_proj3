@@ -70,24 +70,6 @@ public class BuildGrid extends RecursiveTask<int[][]> {
 	 * @return a grid where each element holds the total population for that grid position
 	 */
 	public static int[][] sequentialBuildGrid(int low, int high, BuildGridData data) {
-		//This seems kind of hacky, but I was pulling my hair out trying to test this function
-		//and was miserably failing because it was using the mercatorConversion. 
-		//Pulling the real work of the function out into an overloaded function was 
-		//my way of avoiding the mercatorConversion while not breaking all the clients 
-		//to this function
-		return sequentialBuildGrid(false, low, high, data);
-	}
-	
-	/**
-	 * This function was overloaded strictly for testing purposes.
-	 * sequential build a grid that holds the total population for that grid position.
-	 * @param test boolean of whether calling this function for testing purposes
-	 * @param low lower index to start iterating over the input array
-	 * @param high index to stop iterating over the input array
-	 * @param data holds the input array and other data needed to build the grid
-	 * @return a grid where each element holds the total population for that grid position
-	 */
-	public static int[][] sequentialBuildGrid(boolean test, int low, int high, BuildGridData data) {
 		int yBuckets = data.getYBuckets();
 		int xBuckets = data.getXBuckets();
 		int[][] grid = new int[yBuckets][xBuckets];
@@ -101,13 +83,7 @@ public class BuildGrid extends RecursiveTask<int[][]> {
 					int row = yBuckets - y; // b/c our grid is flipped from how user views it
 					Rectangle bucket = Rectangle.makeRectangle(col, row, col, row, 
 												data.getMap(), xBuckets, yBuckets);
-					
-					Point2D.Float point;
-					if (test) {
-						point = new Point2D.Float(group.longitude, group.realLatitude);
-					} else {
-						point = new Point2D.Float(group.longitude, group.latitude);
-					}
+					Point2D.Float point = new Point2D.Float(group.longitude, group.latitude);
 					if (bucket.insideRectangle(point)) {
 						grid[y][x] += group.population;  
 					}
@@ -117,5 +93,4 @@ public class BuildGrid extends RecursiveTask<int[][]> {
 
 		return grid;
 	}
-
 }

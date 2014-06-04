@@ -9,12 +9,32 @@ public class CensusGroup {
 	public float realLatitude;
 	public float latitude;
 	public float longitude;
+	
+	/**
+	 * Constructor. Use this for general purpose cases.
+	 * Uses mercatorConversion for the latitude
+	 */
 	public CensusGroup(int pop, float lat, float lon) {
+		this(pop, lat, lon, false);
+	}
+	
+	/**
+	 * overloaded Constructor. Use this for testing purposed
+	 * ignored mercatorConversion for the latitude
+	 * @param pop population 
+	 * @param lat latitude 
+	 * @param lon longitude
+	 * @param test true if used for testing purposes,
+	 */
+	public CensusGroup(int pop, float lat, float lon, boolean test) {
 		population = pop;
 		realLatitude = lat;
 		latitude   = mercatorConversion(lat);
-		//latitude = lat; //uncomment this line when testing
 		longitude  = lon;
+		
+		if (test) {
+			latitude = lat;
+		}
 	}
 	
 	private float mercatorConversion(float lat){
