@@ -15,6 +15,13 @@ public class Rectangle {
 	public float top;
 	public float bottom;
 	
+	/**
+	 * constructor
+	 * @param l left edge
+	 * @param r right edge
+	 * @param t top edge
+	 * @param b bottom edge
+	 */
 	public Rectangle(float l, float r, float t, float b) {
 		left   = l;
 		right  = r;
@@ -42,18 +49,10 @@ public class Rectangle {
 	 * @returns true if the point is in the rectangle, else false.
 	 */
 	public boolean insideRectangle(Point2D.Float point) {
-		//todo: fix this so that if a point lies on the top or right
-		//boundary it doesnt get counted twice
 		if (point.x >= left && point.x <= right && point.y >= bottom && point.y <= top) {
 			return true;
 		}
-		/*debugging println
-		System.out.println("point not included" + point.toString() + 
-				"\n top:" + top +
-				"\n left:" + left +
-				"\n bottom:" + bottom +
-				"\n right:" + right);
-		*/
+
 		return false;
 	}
 	
@@ -87,6 +86,10 @@ public class Rectangle {
 		return new Rectangle(left, right, top, bottom);
     }
 	
+	/**
+	 * returns the String of the coordinates of a Rectangle
+	 * @return String representation of the rectangle
+	 */
 	public String toString() {
 		return "[left=" + left + " right=" + right + " top=" + top + " bottom=" + bottom + "]";
 	}

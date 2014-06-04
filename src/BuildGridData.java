@@ -20,7 +20,7 @@ public class BuildGridData {
 	 * Constructor
 	 * @param x the number of xBuckets the user specified
 	 * @param y number of yBuckets the user specified
-	 * @param input the input data
+	 * @param input the input data that the BuildGrid will loop over
 	 * @param map the map of the country
 	 */
 	public BuildGridData(int x, int y, CensusGroup[] input, Rectangle map) {
