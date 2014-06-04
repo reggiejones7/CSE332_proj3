@@ -23,7 +23,6 @@ public class TestFindCorners {
 		cg[1] = new CensusGroup(10, 2, 2);
 		cg[2] = new CensusGroup(100, 3, 3);
 		cg[3] = new CensusGroup(1000, 4, 4); 
-		
 	}
 
 	@Test
@@ -36,5 +35,15 @@ public class TestFindCorners {
 		assertEquals(result.top, 4, 0);
 		
 	}
-
+	
+	@Test
+	public void test_FindCorners_parallel() {
+		findC = new FindCorners(0, cg.length, cg, 1); //last arg indicates parallel
+		Rectangle result = fjPool.invoke(findC);
+		assertEquals(result.left, 1, 0);
+		assertEquals(result.bottom, 1, 0);
+		assertEquals(result.right, 4, 0);
+		assertEquals(result.top, 4, 0);
+		
+	}
 }

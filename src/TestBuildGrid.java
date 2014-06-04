@@ -39,7 +39,6 @@ public class TestBuildGrid {
 	
 	@Test
 	public void test_sequentialBuildGrid() {
-		//build whole grid
 		int[][] grid = BuildGrid.sequentialBuildGrid(true, 0, cg.length, data);
 		/*debug println
 		 for (int[] row : grid) {
@@ -76,5 +75,4 @@ public class TestBuildGrid {
 		assertEquals(grid[2][1], 10);
 		assertEquals(grid[3][0], 1);
 	}
-	
 }
