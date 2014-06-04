@@ -43,7 +43,7 @@ public class TestLockGrid {
 	@Test
 	public void test_sequentialBuildGrid() throws InterruptedException {
 		//build whole grid
-		int[][] grid = BuildGrid.sequentialBuildGrid(true, 0, cg.length, data);
+		int[][] grid = BuildGrid.sequentialBuildGrid(0, cg.length, data);
 		int[][] tempGrid = new int[10][10];
 		Lock[][] lockGrid = new Lock[10][10];
 		for (int lockY = 0; lockY < 10; lockY++) {
