@@ -26,16 +26,16 @@ public class TestLockGrid {
 	public void setUp() {
 
 		cg = new CensusGroup[10];
-		cg[0] = new CensusGroup(100, 1, 1);
-		cg[1] = new CensusGroup(100, 1, 1);
-		cg[2] = new CensusGroup(100, 1, 1);
-		cg[3] = new CensusGroup(100, 1, 1); 
-		cg[4] = new CensusGroup(100, 1, 1); 
-		cg[5] = new CensusGroup(1000, 1, 1); 
-		cg[6] = new CensusGroup(1000, 1, 1); 
-		cg[7] = new CensusGroup(1000, 1, 1); 
-		cg[8] = new CensusGroup(1000, 1, 1); 
-		cg[9] = new CensusGroup(1000, 1, 1); 
+		cg[0] = new CensusGroup(100, 1, 1, true);
+		cg[1] = new CensusGroup(100, 1, 1, true);
+		cg[2] = new CensusGroup(100, 1, 1, true);
+		cg[3] = new CensusGroup(100, 1, 1, true); 
+		cg[4] = new CensusGroup(100, 1, 1, true); 
+		cg[5] = new CensusGroup(1000, 1, 1, true); 
+		cg[6] = new CensusGroup(1000, 1, 1, true); 
+		cg[7] = new CensusGroup(1000, 1, 1, true); 
+		cg[8] = new CensusGroup(1000, 1, 1, true); 
+		cg[9] = new CensusGroup(1000, 1, 1, true); 
 		map = new Rectangle(0, 5, 5, 0);
 		data = new BuildGridData(4, 4, cg, map);
 	}
