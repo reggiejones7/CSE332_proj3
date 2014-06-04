@@ -165,6 +165,7 @@ public class PopulationQuery {
 					grid = fjPool.invoke(bg);
 				}
 			} else {
+				//v5
 				int[][] tempGrid = new int[yBuckets][xBuckets];
 				Lock[][] lockGrid = new Lock[yBuckets][xBuckets];
 				for (int lockY = 0; lockY < yBuckets; lockY++) {

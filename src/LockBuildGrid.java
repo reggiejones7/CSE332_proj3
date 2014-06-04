@@ -2,8 +2,10 @@ import java.awt.geom.Point2D;
 import java.util.concurrent.locks.Lock;
 
 /**
- * Tristan Riddell
- *  
+ * @author Tristan Riddell
+ * Tristan Riddel & Reggie Jones
+ * Project 3
+ * 
  * LockBuildGrid creates a 2d array of ints representing a grid of rectangles.
  * The int value represents the population living within that particular rectangle
  * based on census data from CenPop2010.txt
@@ -12,11 +14,11 @@ import java.util.concurrent.locks.Lock;
  * threads simultaneously in order to accomplish the task in parallel.
  */
 public class LockBuildGrid extends java.lang.Thread {
-	Lock[][] lockGrid;
-	int[][] grid;
-	BuildGridData data;
-	int lo;
-	int hi;
+	private Lock[][] lockGrid;
+	private int[][] grid;
+	private BuildGridData data;
+	private int lo;
+	private int hi;
 	
 	/**
 	 * contructs a ParallelQuery and instantiates fields

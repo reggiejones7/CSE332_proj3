@@ -7,7 +7,7 @@ import java.util.concurrent.RecursiveTask;
  * @author Reggie Jones
  * Reggie Jones & Tristan Riddell
  * 
- * BuildGrid build a 2 dimensional grid (in parallel) of a size x * y of
+ * BuildGrid build a 2 dimensional grid (in parallel or sequential) of a size x * y 
  * the dimensions given by the user. From an input array inside of a BuildGridData
  * object, BuildGrid will iterate over that input array and fill out the grid accordingly
  * by adding the population of each CensusGroup in the input array to the 
