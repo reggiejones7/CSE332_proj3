@@ -172,7 +172,7 @@ public class PopulationQuery {
 						lockGrid[lockY][lockX] = new ReentrantLock();
 					}
 				}
-				LockBuildGrid[] lb = new LockBuildGrid[4];
+				LockBuildGrid[] lb = new LockBuildGrid[LOCK_THREADS];
 				for (int i = 0; i < LOCK_THREADS; i++) {
 					lb[i] = new LockBuildGrid(lockGrid, tempGrid, data, 
 							(i*cd.data_size)/LOCK_THREADS, ((i+1) * cd.data_size) / LOCK_THREADS);
