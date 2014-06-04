@@ -159,7 +159,7 @@ public class PopulationQuery {
 				BuildGrid bg = new BuildGrid(0, cd.data_size, data);
 
 				if (version == 3) {
-					grid = bg.sequentialBuildGrid(0, cd.data_size, data);
+					grid = BuildGrid.sequentialBuildGrid(0, cd.data_size, data);
 				}
 				if (version == 4) {
 					grid = fjPool.invoke(bg);
