@@ -1,0 +1,11 @@
+======Version 5=======
+grid=10x10 612 ms
+grid=20x20 2158 ms
+grid=30x30 4714 ms
+grid=40x40 8642 ms
+grid=50x50 13120 ms
+grid=60x60 20163 ms
+grid=70x70 27216 ms
+grid=80x80 35052 ms
+grid=90x90 45587 ms
+grid=100x100 54726 ms

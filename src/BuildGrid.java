@@ -16,8 +16,10 @@ import java.util.concurrent.RecursiveTask;
  */
 
 public class BuildGrid extends RecursiveTask<int[][]> {
-	public static final int SEQUENTIAL_CUTOFF = 1000; 
-	
+	//public static final int SEQUENTIAL_CUTOFF = 1000; 
+	//changed sequential_cutoff to be public field for  GridBuildingExperiment
+	//so it can be altered
+	public int sequential_cutoff = 1000;
 	public static ForkJoinPool fjPool = new ForkJoinPool();
 	private int low, high;
 	private BuildGridData data;
@@ -41,7 +43,8 @@ public class BuildGrid extends RecursiveTask<int[][]> {
 	 */
 	@Override
 	protected int[][] compute() {
-		if (high - low > SEQUENTIAL_CUTOFF) {
+		//changed to sequential_cutoff for experimentation purposes
+		if (high - low > sequential_cutoff) {
 			//parallel case- parallellizing on cd.data array
 			BuildGrid left = new BuildGrid(low, (high + low) / 2, data);
 			BuildGrid right = new BuildGrid((high + low) / 2, high, data);
